@@ -367,7 +367,7 @@
       if (evt.keyCode === 32) {
         evt.preventDefault();
         var needToRestartTheGame = this.state.currentStatus === Verdict.WIN ||
-            this.state.currentStatus === Verdict.FAIL;
+          this.state.currentStatus === Verdict.FAIL;
         this.initializeLevelAndStart(this.level, needToRestartTheGame);
 
         window.removeEventListener('keydown', this._pauseListener);
@@ -378,19 +378,48 @@
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
+      var message;
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          message = ['Oh, man! You have won!', 'It\'s so cool', 'I\'m really glad for you', 'You can continue the game!', 'Just press SPACE to start'];
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          message = ['You lose!', 'Shit happens!', 'But I think that you should try again.', 'Press SPACE and become the master of fireballs'];
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          message = ['Game is on pause!', 'Relax!', 'You can eat sandwich', 'Omn Omn Omn...'];
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          message = ['Welcome to the magic!', 'You can start this game,', 'if you really want it...', 'Press Space to start'];
           break;
+      }
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      this.ctx.moveTo(330, 100);
+      this.ctx.lineTo(610, 100);
+      this.ctx.lineTo(610, 230);
+      this.ctx.lineTo(310, 250);
+      this.ctx.fill();
+
+      this.ctx.fillStyle = '#FFFFFF';
+      this.ctx.beginPath();
+      this.ctx.moveTo(320, 90);
+      this.ctx.lineTo(600, 90);
+      this.ctx.lineTo(600, 220);
+      this.ctx.lineTo(300, 240);
+      this.ctx.fill();
+      this.ctx.font = '16px PT Mono';
+      formMessage(this.ctx, message, 320, 90);
+
+      function formMessage(ctx, msg, x, y) {
+        for (var i = 0; i < msg.length; i++) {
+          if (i === 0) {
+            ctx.strokeText(msg[i], x + 10, y + 10 + (i + 1) * 18);
+          } else if (i < msg.length - 1) {
+            ctx.strokeText(msg[i], x + 10, y + 20 + (i + 1) * 18);
+          } else {
+            ctx.strokeText(msg[i], x + 10, y + 30 + (i + 1) * 18);
+          }
+        }
       }
     },
 
@@ -499,14 +528,14 @@
            * @param {Object} state
            * @return {Verdict}
            */
-          function checkDeath(state) {
+            function checkDeath(state) {
             var me = state.objects.filter(function(object) {
               return object.type === ObjectType.ME;
             })[0];
 
             return me.state === ObjectState.DISPOSED ?
-                Verdict.FAIL :
-                Verdict.CONTINUE;
+              Verdict.FAIL :
+              Verdict.CONTINUE;
           },
 
           /**
@@ -514,7 +543,7 @@
            * @param {Object} state
            * @return {Verdict}
            */
-          function checkKeys(state) {
+            function checkKeys(state) {
             return state.keysPressed.ESC ? Verdict.PAUSE : Verdict.CONTINUE;
           },
 
@@ -523,10 +552,10 @@
            * @param {Object} state
            * @return {Verdict}
            */
-          function checkTime(state) {
+            function checkTime(state) {
             return Date.now() - state.startTime > 3 * 60 * 1000 ?
-                Verdict.FAIL :
-                Verdict.CONTINUE;
+              Verdict.FAIL :
+              Verdict.CONTINUE;
           }
         ];
       }
@@ -574,8 +603,8 @@
         if (object.sprite) {
           var image = new Image(object.width, object.height);
           image.src = (object.spriteReversed && object.direction & Direction.LEFT) ?
-              object.spriteReversed :
-              object.sprite;
+            object.spriteReversed :
+            object.sprite;
           this.ctx.drawImage(image, object.x, object.y, object.width, object.height);
         }
       }, this);
