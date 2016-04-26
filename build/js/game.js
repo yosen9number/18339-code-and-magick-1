@@ -384,7 +384,7 @@
           message = ['Oh, man! You have won!', 'It\'s so cool', 'I\'m really glad for you', 'You can continue the game!', 'Just press SPACE to start'];
           break;
         case Verdict.FAIL:
-          message = ['You lose!', 'Shit happens!', 'But I think that you should try again.', 'Press SPACE and become the master of fireballs'];
+          message = ['You lose!', 'Shit happens!', 'You should try again.', 'Press SPACE and become', 'the master of fireballs'];
           break;
         case Verdict.PAUSE:
           message = ['Game is on pause!', 'Relax!', 'You can eat sandwich', 'Omn Omn Omn...'];
