@@ -1,6 +1,8 @@
 'use strict';
 
 (function() {
+  var utils = require('./utils');
+
   /**
    * @const
    * @type {number}
@@ -367,7 +369,7 @@
       if (evt.keyCode === 32) {
         evt.preventDefault();
         var needToRestartTheGame = this.state.currentStatus === Verdict.WIN ||
-          this.state.currentStatus === Verdict.FAIL;
+            this.state.currentStatus === Verdict.FAIL;
         this.initializeLevelAndStart(this.level, needToRestartTheGame);
 
         window.removeEventListener('keydown', this._pauseListener);
@@ -378,48 +380,132 @@
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
-      var message;
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          message = ['Oh, man! You have won!', 'It\'s so cool', 'I\'m really glad for you', 'You can continue the game!', 'Just press SPACE to start'];
+          this._drawMessage('Ты победил. Враг не пройдет!');
           break;
         case Verdict.FAIL:
-          message = ['You lose!', 'Shit happens!', 'You should try again.', 'Press SPACE and become', 'the master of fireballs'];
+          this._drawMessage('Странно, но в этот раз ты проиграл');
           break;
         case Verdict.PAUSE:
-          message = ['Game is on pause!', 'Relax!', 'You can eat sandwich', 'Omn Omn Omn...'];
+          this._drawMessage('Игра на паузе, но ты всегда можешь продолжить (нажми пробел)');
           break;
         case Verdict.INTRO:
-          message = ['Welcome to the magic!', 'You can start this game,', 'if you really want it...', 'Press Space to start'];
+          this._drawMessage('Привет. Хоть я и не Супермен,'
+          + ' но тоже могу летать (по нажатию на стрелки).'
+          + ' А еще стреляю огненными шарами');
           break;
       }
-      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-      this.ctx.moveTo(330, 100);
-      this.ctx.lineTo(610, 100);
-      this.ctx.lineTo(610, 230);
-      this.ctx.lineTo(310, 250);
-      this.ctx.fill();
+    },
 
-      this.ctx.fillStyle = '#FFFFFF';
-      this.ctx.beginPath();
-      this.ctx.moveTo(320, 90);
-      this.ctx.lineTo(600, 90);
-      this.ctx.lineTo(600, 220);
-      this.ctx.lineTo(300, 240);
-      this.ctx.fill();
-      this.ctx.font = '16px PT Mono';
-      formMessage(this.ctx, message, 320, 90);
+    /**
+     * Отрисовка окна сообщения персонажа.
+     */
+    _drawMessage: function(textMessage) {
+      var me = this.state.objects.filter(function(object) {
+        return object.type === ObjectType.ME;
+      })[0];
 
-      function formMessage(ctx, msg, x, y) {
-        for (var i = 0; i < msg.length; i++) {
-          if (i === 0) {
-            ctx.strokeText(msg[i], x + 10, y + 10 + (i + 1) * 18);
-          } else if (i < msg.length - 1) {
-            ctx.strokeText(msg[i], x + 10, y + 20 + (i + 1) * 18);
-          } else {
-            ctx.strokeText(msg[i], x + 10, y + 30 + (i + 1) * 18);
-          }
+      /**
+       * Окно сообщения привязываем к положению персонажа.
+       */
+      var MessageBox = {
+        'LOWER_LEFT_POSITION': {
+          'x': me.direction & Direction.RIGHT ? me.x + me.width * 1.1 : me.x - WIDTH / 2.5,
+          'y': me.y + me.height / 2
+        },
+        'TOP_LEFT_POSITION': {
+          'x': me.direction & Direction.RIGHT ? me.x + me.width + 15 : me.x - WIDTH / 2.5 + 15,
+          'y': me.y - HEIGHT / 3
+        },
+        'TOP_RIGHT_POSITION': {
+          'x': me.direction & Direction.RIGHT ? me.x + me.width + WIDTH / 2.5 : me.x,
+          'y': me.y - HEIGHT / 3
+        },
+        'LOWER_RIGHT_POSITION': {
+          'x': me.direction & Direction.RIGHT ? me.x + me.width + WIDTH / 2.5 - 15 : me.x - 15,
+          'y': me.y + me.height / 2
         }
+      };
+
+      var maxLineWidth = MessageBox.LOWER_RIGHT_POSITION.x - MessageBox.LOWER_LEFT_POSITION.x - 10;
+
+      this._writeTextOnMessageBox(MessageBox, textMessage, maxLineWidth);
+    },
+
+    /**
+     * Отрисовка окна сообщения персонажа.
+     */
+    _drawMessageBox: function(MessageBox) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(MessageBox.LOWER_LEFT_POSITION.x, MessageBox.LOWER_LEFT_POSITION.y);
+      this.ctx.lineTo(MessageBox.TOP_LEFT_POSITION.x, MessageBox.TOP_LEFT_POSITION.y);
+      this.ctx.lineTo(MessageBox.TOP_RIGHT_POSITION.x, MessageBox.TOP_RIGHT_POSITION.y);
+      this.ctx.lineTo(MessageBox.LOWER_RIGHT_POSITION.x, MessageBox.LOWER_RIGHT_POSITION.y);
+      this.ctx.closePath();
+      this.ctx.fillStyle = '#FFFFFF';
+      this.ctx.fill();
+    },
+
+    /**
+     * Отрисовка тени для окна сообщения персонажа.
+     */
+    _drawMessageBoxShadow: function(MessageBox, shift) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(MessageBox.LOWER_LEFT_POSITION.x + shift, MessageBox.LOWER_LEFT_POSITION.y + shift);
+      this.ctx.lineTo(MessageBox.TOP_LEFT_POSITION.x + shift, MessageBox.TOP_LEFT_POSITION.y + shift);
+      this.ctx.lineTo(MessageBox.TOP_RIGHT_POSITION.x + shift, MessageBox.TOP_RIGHT_POSITION.y + shift);
+      this.ctx.lineTo(MessageBox.LOWER_RIGHT_POSITION.x + shift, MessageBox.LOWER_RIGHT_POSITION.y + shift);
+      this.ctx.closePath();
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      this.ctx.fill();
+    },
+
+    /**
+     * отрисовка текста сообщения.
+     */
+    _writeTextOnMessageBox: function(MessageBox, textMessage, maxLineWidth) {
+      var textHeight = 16;
+      var arrayOfStrings = textMessage.split(' ');
+      var oneLine = '';
+      var arrayOfLines = [];
+
+      this.ctx.font = '16px PT Mono';
+      this.ctx.baseLine = 'hanging';
+
+      for(var i = 0; i < arrayOfStrings.length; i++) {
+        var tempLine = '';
+        tempLine += arrayOfStrings[i] + ' ';
+        if(this.ctx.measureText(oneLine + tempLine).width < maxLineWidth) {
+          oneLine += tempLine;
+        } else {
+          i--;
+          arrayOfLines.push(oneLine);
+          oneLine = '';
+        }
+      }
+      arrayOfLines.push(oneLine);
+
+      var heightForAllLines = arrayOfLines.length * textHeight;
+      while ((MessageBox.LOWER_LEFT_POSITION.y - MessageBox.TOP_LEFT_POSITION.y) < (heightForAllLines + textHeight)) {
+        MessageBox.TOP_LEFT_POSITION.y = MessageBox.TOP_LEFT_POSITION.y - textHeight;
+        MessageBox.TOP_RIGHT_POSITION.y = MessageBox.TOP_RIGHT_POSITION.y - textHeight;
+      }
+
+      var curentTextPosition = {
+        'x': MessageBox.TOP_LEFT_POSITION.x + textHeight,
+        'y': MessageBox.TOP_LEFT_POSITION.y + textHeight * 2
+      };
+
+      this._drawMessageBoxShadow(MessageBox, 10);
+      this._drawMessageBox(MessageBox);
+
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+
+      for(i = 0; i < arrayOfLines.length; i++) {
+        this.ctx.fillText(arrayOfLines[i], curentTextPosition.x,
+           curentTextPosition.y);
+        curentTextPosition.y += textHeight;
       }
     },
 
@@ -528,14 +614,14 @@
            * @param {Object} state
            * @return {Verdict}
            */
-            function checkDeath(state) {
+          function checkDeath(state) {
             var me = state.objects.filter(function(object) {
               return object.type === ObjectType.ME;
             })[0];
 
             return me.state === ObjectState.DISPOSED ?
-              Verdict.FAIL :
-              Verdict.CONTINUE;
+                Verdict.FAIL :
+                Verdict.CONTINUE;
           },
 
           /**
@@ -543,7 +629,7 @@
            * @param {Object} state
            * @return {Verdict}
            */
-            function checkKeys(state) {
+          function checkKeys(state) {
             return state.keysPressed.ESC ? Verdict.PAUSE : Verdict.CONTINUE;
           },
 
@@ -552,10 +638,10 @@
            * @param {Object} state
            * @return {Verdict}
            */
-            function checkTime(state) {
+          function checkTime(state) {
             return Date.now() - state.startTime > 3 * 60 * 1000 ?
-              Verdict.FAIL :
-              Verdict.CONTINUE;
+                Verdict.FAIL :
+                Verdict.CONTINUE;
           }
         ];
       }
@@ -603,8 +689,8 @@
         if (object.sprite) {
           var image = new Image(object.width, object.height);
           image.src = (object.spriteReversed && object.direction & Direction.LEFT) ?
-            object.spriteReversed :
-            object.sprite;
+              object.spriteReversed :
+              object.sprite;
           this.ctx.drawImage(image, object.x, object.y, object.width, object.height);
         }
       }, this);
@@ -713,4 +799,46 @@
   var game = new Game(document.querySelector('.demo'));
   game.initializeLevelAndStart();
   game.setGameStatus(window.Game.Verdict.INTRO);
+
+  var cloudBlock = document.querySelector('.header-clouds');
+  var gameBlock = document.querySelector('.demo');
+  var cloudIsVisible = true;
+  var cloudFirstPosition = cloudBlock.style.backgroundPosition;
+
+  /**
+   *  set game pause
+   */
+  function setGamePause() {
+    game.setGameStatus(Game.Verdict.PAUSE);
+  }
+
+  /**
+   * @param  {boolean} visible
+   */
+  function moveClouds(visible) {
+    if(visible) {
+      var footerPosition = cloudBlock.getBoundingClientRect();
+      cloudBlock.style.backgroundPosition = (footerPosition.top * 0.3) + 'px';
+    } else {
+      cloudBlock.style.backgroundPosition = cloudFirstPosition;
+    }
+  }
+
+  function setScrollEnabled() {
+    var scrollTimeout;
+
+    moveClouds(cloudIsVisible);
+
+    clearTimeout(scrollTimeout);
+
+    scrollTimeout = setTimeout(function() {
+      if(!utils.checkVisibilty(gameBlock)) {
+        setGamePause();
+      }
+
+      cloudIsVisible = utils.checkVisibilty(cloudBlock);
+    }, 100);
+  }
+
+  window.addEventListener('scroll', setScrollEnabled);
 })();
