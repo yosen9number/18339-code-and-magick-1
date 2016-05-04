@@ -373,90 +373,54 @@ Game.prototype = {
     }
   },
 
-  /*
-   * Отрисовка сообщения
-   * @param {string} text
-   */
-  _showMessage: function(textMsg) {
-    var ctx = this.ctx;
-
-    // параметры бокса сообщения
-    var x = 300;
-    var y = 100;
-    var padding = 25;
-    var lineHeight = 25;
-    var maxSignInLine = 35;
-    var msgWidth = maxSignInLine * 9;
-
-    // параметры текста
-    ctx.font = '16px PT Mono';
-    ctx.textBaseline = 'middle';
-    var margin = y;
-
-    var j = 0;
-    // наполняем массив словами текста сообщения
-    var wordArray = textMsg.split(' ');
-    // создаем пустой массив, для последующего наполнения его строчками из слов
-    var lineWord = [''];
-
-    for (var i = 0; i < wordArray.length; i++) {
-      // если кол-во знаков в массиве меньше максимального, то наполняем массив j строки словами
-      // пока кол-во знаков данной строки не превысит максимальную отметку.
-      // При превышении макс.допустимого кол-ва знаков - переносим на след.строку
-      if (lineWord[j].length + wordArray[i].length < maxSignInLine) {
-        lineWord[j] += wordArray[i] + ' ';
-      } else {
-        j++;
-        lineWord[j] = [''];
-        lineWord[j] += wordArray[i] + ' ';
-      }
-    }
-
-    // Вычисляем высоту бокса
-    var msgHeight = lineWord.length * lineHeight;
-
-    // рисуем тень
-    ctx.fillStyle = '#313030';
-    ctx.beginPath();
-    ctx.fillRect(x, y, msgWidth + (0.5 * padding), msgHeight + (0.5 * padding));
-    ctx.closePath();
-
-    // рисуем бокс сообщения
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.fillRect(x - padding, y - padding, msgWidth + padding, msgHeight + padding);
-    ctx.closePath();
-
-    // отрисовываем текст по строчкам
-    ctx.fillStyle = 'black';
-    for (i = 0; i < lineWord.length; i++) {
-      ctx.fillText(lineWord[i], x, margin);
-      margin += lineHeight;
-    }
-
-  },
-
 
   /**
    * Отрисовка экрана паузы.
    */
   _drawPauseScreen: function() {
-    var textMsg;
+    var message;
     switch (this.state.currentStatus) {
       case Verdict.WIN:
-        textMsg = 'Ты лучший из лучших!';
+        message = ['Oh, man! You have won!', 'It\'s so cool', 'I\'m really glad for you', 'You can continue the game!', 'Just press SPACE to start'];
         break;
       case Verdict.FAIL:
-        textMsg = 'Ты проиграл';
+        message = ['You lose!', 'Shit happens!', 'You should try again.', 'Press SPACE and become', 'the master of fireballs'];
         break;
       case Verdict.PAUSE:
-        textMsg = 'Спасибо, что остановил меня!';
+        message = ['Game is on pause!', 'Relax!', 'You can eat sandwich', 'Omn Omn Omn...'];
         break;
       case Verdict.INTRO:
-        textMsg = 'Парам-парам-па! Меня зовут Пендальф, и я синий! Нажми на Space и ты увидишь на что я способен (прям ого-го) !!!';
+        message = ['Welcome to the magic!', 'You can start this game,', 'if you really want it...', 'Press Space to start'];
         break;
     }
-    this._showMessage(textMsg);
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    this.ctx.moveTo(330, 100);
+    this.ctx.lineTo(610, 100);
+    this.ctx.lineTo(610, 230);
+    this.ctx.lineTo(310, 250);
+    this.ctx.fill();
+
+    this.ctx.fillStyle = '#FFFFFF';
+    this.ctx.beginPath();
+    this.ctx.moveTo(320, 90);
+    this.ctx.lineTo(600, 90);
+    this.ctx.lineTo(600, 220);
+    this.ctx.lineTo(300, 240);
+    this.ctx.fill();
+    this.ctx.font = '16px PT Mono';
+    formMessage(this.ctx, message, 320, 90);
+
+    function formMessage(ctx, msg, x, y) {
+      for (var i = 0; i < msg.length; i++) {
+        if (i === 0) {
+          ctx.strokeText(msg[i], x + 10, y + 10 + (i + 1) * 18);
+        } else if (i < msg.length - 1) {
+          ctx.strokeText(msg[i], x + 10, y + 20 + (i + 1) * 18);
+        } else {
+          ctx.strokeText(msg[i], x + 10, y + 30 + (i + 1) * 18);
+        }
+      }
+    }
   },
 
   /**
