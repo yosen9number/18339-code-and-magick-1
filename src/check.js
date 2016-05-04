@@ -1,30 +1,36 @@
-var message;
-
 function getMessage(a, b) {
-  if (typeof a == 'boolean') {
-    if (a) {
-      message = 'Я попал в ' + b;
-    } else {
-      message = 'Я никуда не попал';
-    }
+  var sum = 0;
+  var length = 0;
+  var minLength = 0;
+      
+  if(typeof a === 'boolean') {
+      if(a) {
+          return 'Я попал в ' + b;
+      }
+      else{
+          return 'Я никуда не попал';          
+      }
   }
-  else if (typeof a == 'number') {
-    message = 'Я прыгнул на '+ a * 100 + ' сантиметров';
+  
+  if(typeof a === 'number') {
+      return 'Я прыгнул на '  + a * 100 +  ' сантиметров';
   }
-  else if (typeof a == 'object' && typeof b == 'object') {
-    for (var i = 0; i < a.length; i++ ) {
-      a[i] = a[i] * b[i];
-    }
-    var length = a.reduce(function(sum, current){
-      return sum + current;
-    });
-    message = 'Я прошёл ' + length + ' метров';
+  
+  if(Array.isArray(a)) {
+      if(Array.isArray(b)) {
+          minLength = Math.min(a.length, b.length);
+          
+          for(var i = 0; i < minLength; i++){
+              length += a[i] * b[i];
+          }
+      
+          return 'Я прошёл ' + length + ' метров';
+      }
+      
+      for(var i = 0; i < a.length; i++){
+          sum += Math.abs(a[i]);	    
+	  }
+      
+      return 'Я прошёл ' + sum + ' шагов';
   }
-  else if (typeof a == 'object') {
-    var result = a.reduce(function(sum, current){
-      return sum + current;
-    });
-    message = 'Я прошёл ' + result + ' шагов';
-  }
-  return message;
 }
