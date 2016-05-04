@@ -1,36 +1,36 @@
+/**
+ * Created by Катэ on 23.03.2016.
+ */
+
+'use strict';
+
 function getMessage(a, b) {
-  var sum = 0;
-  var length = 0;
-  var minLength = 0;
-      
-  if(typeof a === 'boolean') {
-      if(a) {
-          return 'Я попал в ' + b;
+  var result;
+
+  //если первый аргумент логический тип
+  if (typeof a === 'boolean') {
+    if (a) {
+      result = 'Я попал в ' + b;
+    } else {
+      result = 'Я никуда не попал';
+    }
+  } else if (typeof a === 'number') {
+    result = 'Я прыгнул на ' + a * 100 + ' сантиметров';
+  } else if (typeof a === 'object' && typeof b === 'object') {
+    var length = 0;
+    for (var i = 0; i < a.length; i++) {
+      if (i < b.length) {
+        length += a[i] * b[i];
       }
-      else{
-          return 'Я никуда не попал';          
-      }
+    }
+    result = 'Я прошёл ' + length + ' метров';
+  } else if (typeof a === 'object') {
+    var sum = 0;
+    for (i = 0; i < a.length; i++) {
+      sum += a[i];
+    }
+    result = 'Я прошёл ' + sum + ' шагов';
   }
-  
-  if(typeof a === 'number') {
-      return 'Я прыгнул на '  + a * 100 +  ' сантиметров';
-  }
-  
-  if(Array.isArray(a)) {
-      if(Array.isArray(b)) {
-          minLength = Math.min(a.length, b.length);
-          
-          for(var i = 0; i < minLength; i++){
-              length += a[i] * b[i];
-          }
-      
-          return 'Я прошёл ' + length + ' метров';
-      }
-      
-      for(var i = 0; i < a.length; i++){
-          sum += Math.abs(a[i]);	    
-	  }
-      
-      return 'Я прошёл ' + sum + ' шагов';
-  }
+
+  return result;
 }

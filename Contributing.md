@@ -24,7 +24,7 @@ git push
 ¹ В `upstream` должна быть ссылка на репозиторий Академии. Если его там нет, добавьте:
 
 ```
-git remote add upstream git@github.com:htmlacademy-javascript/18339-code-and-magick.git
+git remote add upstream git@github.com:htmlacademy-javascript/39455-code-and-magick.git
 ```
 
 Когда вы обновили `master`, создайте ветку для нового задания:
