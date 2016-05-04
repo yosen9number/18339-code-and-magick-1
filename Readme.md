@@ -1,12 +1,7 @@
 # Личный проект «Код и Магия» [![Build status][travis-image]][travis-url] [![Dependency status][dependency-image]][dependency-url]
 
-* Студент: [Bipolar Disorder](https://up.htmlacademy.ru/javascript/4/user/18339).
-* Наставник: `Неизвестно`.
-
-### Немного о себе
-
-##### Вы прошли интенсивный онлайн-курс «Продвинутый HTML и CSS»?
-`Да, успешно`.
+* Студент: [Екатерина Сидихменова](https://up.htmlacademy.ru/javascript/4/user/39455).
+* Наставник: [Алексей Хапов](https://htmlacademy.ru/profile/id118459).
 
 ---
 
@@ -19,7 +14,7 @@ _`.editorconfig`, `.eslintignore`, `.eslintrc`, `.gitignore`, `.travis.yml`, `pa
 
 Репозиторий создан для обучения на интенсивном онлайн‑курсе «[Базовый JavaScript](https://htmlacademy.ru/intensive/javascript)» от [HTML Academy](https://htmlacademy.ru).
 
-[travis-image]: https://travis-ci.org/htmlacademy-javascript/18339-code-and-magick.svg?branch=master
-[travis-url]: https://travis-ci.org/htmlacademy-javascript/18339-code-and-magick
-[dependency-image]: https://david-dm.org/htmlacademy-javascript/18339-code-and-magick.svg?style=flat-square
-[dependency-url]: https://david-dm.org/htmlacademy-javascript/18339-code-and-magick
+[travis-image]: https://travis-ci.org/htmlacademy-javascript/39455-code-and-magick.svg?branch=master
+[travis-url]: https://travis-ci.org/htmlacademy-javascript/39455-code-and-magick
+[dependency-image]: https://david-dm.org/htmlacademy-javascript/39455-code-and-magick.svg?style=flat-square
+[dependency-url]: https://david-dm.org/htmlacademy-javascript/39455-code-and-magick

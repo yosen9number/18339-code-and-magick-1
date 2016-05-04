@@ -84,7 +84,7 @@
     </fieldset>
 
     <div class="review-form-controls">
-      <button class="review-form-control review-submit" type="submit">Добавить отзыв</button>
+      <button class="review-form-control review-submit" type="submit" >Добавить отзыв</button>
       <div class="review-form-control review-fields">
         Осталось заполнить:<br>
         <label for="review-name" class="review-fields-label review-fields-name">имя</label>
@@ -119,6 +119,14 @@
   </article>
 </template>
 
+<script>
+  var reviews = [];
+
+  function __reviewsLoadCallback(array) {
+    reviews = array;
+  }
+</script>
 <script src="js/main.js"></script>
+
 </body>
 </html>

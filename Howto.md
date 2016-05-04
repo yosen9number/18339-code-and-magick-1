@@ -47,7 +47,7 @@ git clone git@github.com:htmlacademy-javascript/code-and-magick.git
 cd code-and-magick
 
 # Привяжите к ней репозиторий Академии
-git remote add upstream git@github.com:htmlacademy-javascript/18339-code-and-magick.git
+git remote add upstream git@github.com:htmlacademy-javascript/39455-code-and-magick.git
 ```
 
 ### 5. Настройте SSH-ключи
