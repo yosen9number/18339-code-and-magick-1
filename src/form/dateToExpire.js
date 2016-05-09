@@ -10,7 +10,7 @@
 //2) Прибавляем к текущей дате
 function dateToExpire() {
   var today = new Date();
-  var dateBD = new Date(today.getFullYear(), 3, 8);
+  var dateBD = new Date(today.getFullYear(), 5, 25);
   var dateExp;
 
   if (dateBD > today) {
